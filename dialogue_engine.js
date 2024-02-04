@@ -1,5 +1,5 @@
 // Ours
-import { units } from './unit_class.js';
+import { playerUnits } from './unit_class.js';
 
 // Like getInput()
 import promptFunc from 'prompt-sync';
@@ -9,7 +9,6 @@ import fs from 'node:fs';
 
 export class DialogueEngine {
   LINE_WIDTH;
-  
 
   constructor(lineWidth) {
     this.LINE_WIDTH = lineWidth;
@@ -35,7 +34,7 @@ export class DialogueEngine {
     let counter = this.LINE_WIDTH-4;
     while(true) {
       // if no more words, break
-      if (wordArray.length == 0) {
+      if (wordArray.length === 0) {
         break;
       }
       const nextWord = wordArray.shift();
@@ -72,9 +71,9 @@ export class DialogueEngine {
           // handle the name
           const firstWord = wordArray.shift();
           const charOrName = firstWord.slice(0, -1);
-          if (charOrName.toLowerCase() in units) {
-            const unitName = units[charOrName.toLowerCase()].unitName;
-            this.rawPrintLine(['[ ' + unitName + ' ]']);
+          if (charOrName.toLowerCase() in playerUnits) {
+            const playerUnitName = playerUnits[charOrName.toLowerCase()].playerUnitName;
+            this.rawPrintLine(['[ ' + playerUnitName + ' ]']);
           } else {
             const otherName = charOrName.replace(/[A-Z]/g, " $&").slice(1); // https://stackoverflow.com/questions/73820261/break-camel-case-function-in-javascript
             this.rawPrintLine(['[ ' + otherName + ' ]']);

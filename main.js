@@ -1,13 +1,15 @@
 // Ours
-import { units } from './unit_class.js';
+import { playerUnits, weaponTypes, weaponsTriangleAvB, enemiesLevel1 } from './unit_class.js';
 import { DialogueEngine } from './dialogue_engine.js';
+import { Map } from './battle_engine.js';
 
 // Like getInput()
 import promptFunc from 'prompt-sync';
 const prompt = promptFunc();
 
-const QUIT_INPUT = 'q';
 const LINE_WIDTH = 80;
+
+const QUIT_INPUT = 'q';
 
 function loopCharacters(menuTitle, funcOnChar) {
   while (true) {
@@ -22,7 +24,7 @@ function loopCharacters(menuTitle, funcOnChar) {
 
     if (input === QUIT_INPUT) {
       break;
-    } else if (input in units) {
+    } else if (input in playerUnits) {
       funcOnChar(input);
     } else {
       console.log('Sorry, please enter a valid input. ')
@@ -30,18 +32,18 @@ function loopCharacters(menuTitle, funcOnChar) {
   } 
 }
 
-function printInfo(char) {
-  console.log('\nAbout ' + units[char].unitName + ':');
-  console.log(units[char].unitDescription);
+function printInfo(playerChar) {
+  console.log('\nAbout ' + playerUnits[playerChar].playerUnitName + ':');
+  console.log(playerUnits[playerChar].playerUnitDescription);
 }
 
 function meetCharactersLoop() {
   loopCharacters('\nMeet the characters', printInfo);
 }
 
-function printStats(char) {
-  const unit = units[char]
-  console.log('\n' + unit.unitName + "'s stats:");
+function printStats(playerChar) {
+  const playerUnit = playerUnits[playerChar]
+  console.log('\n' + playerUnit.playerUnitName + "'s stats:");
   const statsNames = {
     'level': 'Level',
     'hp': 'HP',
@@ -55,11 +57,7 @@ function printStats(char) {
   }
   console.log();
   for (const [stat, name] of Object.entries(statsNames)) {
-    if (unit.currentStats[stat] === null) {
-      console.log(unit.unitStats[stat] + ' : ' + name);
-    } else {
-      console.log(unit.currentStats[stat] + ' / ' + unit.unitStats[stat] + ' : ' + name);
-    }
+    console.log(playerUnit.playerUnitStats[stat] + ' : ' + name);
   }
 }
 
@@ -79,7 +77,9 @@ function play1Post() {
 
 // can you take params into a pointer function?
 function playLevel1() {
-  console.log('level 1');
+  console.log('\nLevel 1');
+  const map = new Map('level1players.csv');
+  map.printMap();
 }
 
 // Run the main menu loop

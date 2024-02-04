@@ -1,53 +1,196 @@
 
-const EMPTY_STATS = {
-  // currentStats shouldn't have level
-  'hp': 0,
-  'str': 0,
-  'mag': 0,
-  'def': 0,
-  'res': 0,
-  'skill': 0,
-  'speed': 0,
-  'mov': 0
+class WeaponType {
+  weaponName;
+  weaponStats;
+  isHealing;
+  
+  constructor(weaponName, isHealing, weaponStats) {
+    this.weaponName = weaponName;
+    this.isHealing = isHealing;
+    this.weaponStats = weaponStats;
+  }
 }
 
-function addStatObjs(statObjA, statObjB) {
-  const resultStat = {
-    // currentStats shouldn't have level
-    'hp': statObjA['hp'] + statObjB['hp'],
-    'str': statObjA['str'] + statObjB['str'],
-    'mag': statObjA['mag'] + statObjB['mag'],
-    'def': statObjA['def'] + statObjB['def'],
-    'res': statObjA['res'] + statObjB['res'],
-    'skill': statObjA['skill'] + statObjB['skill'],
-    'speed': statObjA['speed'] + statObjB['speed'],
-    'mov': statObjA['mov'] + statObjB['mov']
-  }
-  return resultStat;
+export const weaponTypes = {
+  's': new WeaponType('Sword', false, 
+  {
+    'damage': 6,
+    'hit': 90,
+    'crit': 0,
+    'range': [1]
+  }),
+  'l': new WeaponType('Lance', false, 
+  {
+    'damage': 7,
+    'hit': 80,
+    'crit': 0,
+    'range': [1]
+  }),
+  'a': new WeaponType('Axe', false, 
+  {
+    'damage': 8,
+    'hit': 70,
+    'crit': 0,
+    'range': [1]
+  }),
+  'b': new WeaponType('Bow', false, 
+  {
+    'damage': 8,
+    'hit': 80,
+    'crit': 0,
+    'range': [2]
+  }),
+  'h': new WeaponType('Heal', true, 
+  {
+    'power': 8, 
+    'range': [1]
+  }),
 }
+
+export function weaponsTriangleAvB(weaponA, weaponB) {
+  if ((weaponA === 's' && weaponB === 'a') || 
+  (weaponA === 'a' && weaponB === 'l')
+  (weaponA === 'l' && weaponB === 's')) {
+    return 1; // A has advantage
+  } else if ((weaponA === 'a' && weaponB === 's') || 
+  (weaponA === 'l' && weaponB === 'a')
+  (weaponA === 's' && weaponB === 'l')) {
+    return -1; // A has disadvantage
+  } else {
+    return 0;
+  }
+}
+
+// ----------------------------------------
 
 class Unit {
-  unitName;
+  visualChar;
+  weaponInitial;
+
+  constructor(visualChar, weaponInitial) {
+    this.visualChar = visualChar;
+    this.weaponInitial = weaponInitial;
+  }
+
+  getVisualUnitLetters() {
+    return this.visualChar + this.weaponInitial;
+  }
+}
+
+// ----------------------------------------
+
+class EnemyUnit extends Unit {
+  enemyName;
   // stats
-  unitStats;
-  currentStats;
+  enemyStats;
+  
+  constructor(enemyName, weaponInitial, enemyStats) {
+    super('e', weaponInitial);
+
+    this.enemyName = enemyName;
+    // weapons    // stats
+    this.enemyStats = enemyStats;
+  }
+}
+
+function createAxeHenchman() {
+  return new EnemyUnit('Axe Henchman', 'a',
+  {
+    'level': 2,
+    'hp': 20,
+    'str': 7,
+    'mag': 0,
+    'def': 3,
+    'res': 1,
+    'skill': 4,
+    'speed': 5,
+    'mov': 5
+  });
+}
+
+function createBowHenchman() {
+  return new EnemyUnit('Bow Henchman', 'b',
+  {
+    'level': 3,
+    'hp': 19,
+    'str': 7,
+    'mag': 0,
+    'def': 5,
+    'res': 4,
+    'skill': 9,
+    'speed': 6,
+    'mov': 5
+  });
+}
+
+function createSwordHenchman() {
+  return new EnemyUnit('Sword Henchman', 's',
+  {
+    'level': 2,
+    'hp': 18,
+    'str': 6,
+    'mag': 0,
+    'def': 2,
+    'res': 2,
+    'skill': 6,
+    'speed': 9,
+    'mov': 5
+  });
+}
+
+function createAxeBanditLeader() {
+  return new EnemyUnit('Bandit Leader', 'A',
+  {
+    'level': 4,
+    'hp': 20,
+    'str': 7,
+    'mag': 2,
+    'def': 7,
+    'res': 3,
+    'skill': 6,
+    'speed': 7,
+    'mov': 5
+  });
+}
+
+export const enemiesLevel1 = {
+  'ea1': createAxeHenchman(),
+  'ea2': createAxeHenchman(),
+  'eb3': createBowHenchman(),
+
+  'ea4': createAxeHenchman(),
+  'ea5': createAxeHenchman(),
+  'es6': createSwordHenchman(),
+
+  'ea7': createAxeHenchman(),
+  'es8': createSwordHenchman(),
+  'eb9': createBowHenchman(),
+  'eA': createAxeBanditLeader()
+}
+
+// ----------------------------------------
+
+class PlayerUnit extends Unit {
+  playerUnitName;
+  // stats
+  playerUnitStats;
   // growth rates
   growthRates;
   
-  constructor(unitName, unitDescription, unitStats, growthRates) {
-    this.unitName = unitName;
-    this.unitDescription = unitDescription;
+  constructor(playerUnitName, visualChar, weaponInitial, playerUnitDescription, playerUnitStats, growthRates) {
+    super(visualChar, weaponInitial);
+
+    this.playerUnitName = playerUnitName;
+    this.playerUnitDescription = playerUnitDescription;
     // stats
-    this.unitStats = unitStats;
-    this.currentStats = addStatObjs(this.unitStats, EMPTY_STATS);
-    this.currentStats['level'] = null;
+    this.playerUnitStats = playerUnitStats;
     // growth rates
     this.growthRates = growthRates;
   }
 }
 
-export const units = {
-  'a': new Unit('Ava', 
+export const playerUnits = {
+  'a': new PlayerUnit('Ava', 'A', 's',
   `\nAva really likes horses, and she can't help being a little enthusiastic! 
 She fights with a sword. 
 She is part of the traveling merchant group that also includes Foteini, Leonidas, and Malcolm.`,
@@ -71,7 +214,7 @@ She is part of the traveling merchant group that also includes Foteini, Leonidas
     'speed': 45,
   }), 
 
-  'f': new Unit('Foteini', 
+  'f': new PlayerUnit('Foteini', 'F', 'b',
   `\nFoteini is very quiet and observant, two strengths that make her a great hunter! 
 She fights with a bow. 
 She is part of the traveling merchant group that also includes Ava, Leonidas, and Malcolm.`,
@@ -95,7 +238,7 @@ She is part of the traveling merchant group that also includes Ava, Leonidas, an
     'speed': 40,
   }), 
 
-  'l': new Unit('Leonidas', 
+  'l': new PlayerUnit('Leonidas', 'L', 'l',
   `\nLeonidas seems reserved at first, but you can always rely on him to protect his friends. He is the best cook in the group! 
 He fights with a lance. 
 He is part of the traveling merchant group that also includes Ava, Foteini, and Malcolm.`,
@@ -119,7 +262,7 @@ He is part of the traveling merchant group that also includes Ava, Foteini, and 
     'speed': 40,
   }), 
 
-  'm': new Unit('Malcolm', 
+  'm': new PlayerUnit('Malcolm', 'M', 'h',
     `\nMalcolm loves to read, and he can usually find the solution to any problem! 
 He is a healer, so he uses a staff. 
 He is part of the traveling merchant group that also includes Ava, Foteini, and Leonidas.`,
