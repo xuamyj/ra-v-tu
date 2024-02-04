@@ -1,0 +1,21 @@
+A: We're back from patrol. Leonidas and I spotted some bandits gathering not too far from here.
+
+L: About a dozen men. Armed. Looked planning something.
+
+M: Did they see you? Are they following?
+
+A: No, I don't think so. We kept our distance and watched from hiding.
+
+F: What do you think their plans are? Could be trouble for travelers on the road.
+
+M: Best we-
+
+BanditLeader: Well well, what do we have here? A couple of merchants and their guards? You shouldn't be out here all alone.
+
+Henchman: We could help you out... for a price! Hand over all your goods and no one gets hurt.
+
+A: I'm afraid we won't be doing that. You'll have to go find loot elsewhere.
+
+BanditLeader: Wrong answer! Boys, take care of them. Leave nothing behind!
+
+L: We fight now. No choice. Stay close, help each other. We stop them here!
