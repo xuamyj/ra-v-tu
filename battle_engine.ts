@@ -1,5 +1,5 @@
 // Ours
-import { playerUnits, enemiesLevel1 } from './unit_class.js';
+import { playerUnits, enemiesLevel1, Unit } from './unit_class';
 
 import fs from 'node:fs';
 
@@ -37,41 +37,41 @@ const ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M
 export class Map {
   numRows; // 16
   numCols; // 11, A-J
-  terrainMap = {}; // Dictionary: location -> terrain. Shouldn't change
-  unitToLoc = {}; // Dictionary: unit -> location
-  locToUnit = {}; // Dictionary: location -> unit
+  terrainMap : Record<string, string> = {}; // Dictionary: location -> terrain. Shouldn't change
+  unitToLoc : Record<string, [string, string]> = {}; // Dictionary: unit -> location
+  locToUnit : Record<string, string> = {}; // Dictionary: location -> unit
 
-  allUnits; 
+  allUnits : Record<string, Unit>; 
 
-  constructor(filename) {
-    try {
-      const data = fs.readFileSync(filename, 'utf8');
-      const lines = data.split('\n');
+  constructor(filename : string) {
+    const data = fs.readFileSync(filename, 'utf8');
+    const lines = data.split('\n');
 
-      const numRowsCols = lines.shift().split(',');
-      this.numRows = numRowsCols[0];
-      this.numCols = numRowsCols[1];
+    const firstLine = lines.shift();
+    if (!firstLine) {
+      throw "Map file not formatted correctly.";
+    }
+    const numRowsCols = firstLine.split(',');
+    this.numRows = Number(numRowsCols[0]);
+    this.numCols = Number(numRowsCols[1]);
 
-      for (let row = 0; row < lines.length; row++) {
-        const lineStr = lines[row];
+    for (let row = 0; row < lines.length; row++) {
+      const lineStr = lines[row];
 
-        const cells = lineStr.split(',');
-        for (let col = 0; col < cells.length; col++) {
-          const visualRow = row+1;
-          const visualRowStr = String(visualRow);
-          const visualColStr = ALPHABET[col];
+      const cells = lineStr.split(',');
+      for (let col = 0; col < cells.length; col++) {
+        const visualRow = row+1;
+        const visualRowStr = String(visualRow);
+        const visualColStr = ALPHABET[col];
 
-          const cellStr = cells[col].trim();
-          if (cellStr !== '-') {
-            const terrain = cellStr[0];
-            const unitChar = cellStr.slice(1);
+        const cellStr = cells[col].trim();
+        if (cellStr !== '-') {
+          const terrain = cellStr[0];
+          const unitChar = cellStr.slice(1);
 
-            this.addToMapsConstructorHelper(visualRowStr, visualColStr, terrain, unitChar);
-          }
+          this.addToMapsConstructorHelper(visualRowStr, visualColStr, terrain, unitChar);
         }
       }
-    } catch (err) {
-      console.error(err);
     }
 
     // // Fake test data
@@ -84,7 +84,7 @@ export class Map {
     this.allUnits = {...playerUnits, ...enemiesLevel1};
   }
 
-  addToMapsConstructorHelper(visualRowStr, visualColStr, terrain, rawUnitChar) {
+  addToMapsConstructorHelper(visualRowStr : string, visualColStr : string, terrain : string, rawUnitChar : string) {
     if (terrain !== '-') {
       this.terrainMap[visualColStr+visualRowStr] = terrain;
     }
@@ -101,7 +101,7 @@ export class Map {
     console.log('   +' + '----+'.repeat(this.numCols));
   }
 
-  rawPrintCell(visualRowStr, visualColStr) {
+  rawPrintCell(visualRowStr : string, visualColStr : string) {
     const terrain = this.terrainMap[visualColStr + visualRowStr];
     if (terrain === '#') { // terrainMap has wall
       process.stdout.write('####');

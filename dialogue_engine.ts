@@ -1,5 +1,5 @@
 // Ours
-import { playerUnits } from './unit_class.js';
+import { playerUnits } from './unit_class';
 
 // Like getInput()
 import promptFunc from 'prompt-sync';
@@ -10,7 +10,7 @@ import fs from 'node:fs';
 export class DialogueEngine {
   LINE_WIDTH;
 
-  constructor(lineWidth) {
+  constructor(lineWidth : number) {
     this.LINE_WIDTH = lineWidth;
   }
 
@@ -20,14 +20,14 @@ export class DialogueEngine {
     console.log('|' + ' '.repeat(this.LINE_WIDTH-2) + '|');
   }
 
-  endPrintDialogue({addExtraSpace}={}) {
+  endPrintDialogue({addExtraSpace} : {addExtraSpace ?: boolean}) {
     if (addExtraSpace) {
       console.log('|' + ' '.repeat(this.LINE_WIDTH-2) + '|');
     }
     console.log('+' + '-'.repeat(this.LINE_WIDTH-2) + '+');
   }
 
-  rawPrintLine(wordArray) {
+  rawPrintLine(wordArray : string[]) {
     process.stdout.write('| ');
     // let wordArray = line.split(" ");
 
@@ -37,7 +37,7 @@ export class DialogueEngine {
       if (wordArray.length === 0) {
         break;
       }
-      const nextWord = wordArray.shift();
+      const nextWord = wordArray.shift() as string;
 
       // if need a new line
       if (counter-(nextWord.length+1) < 0) {
@@ -53,7 +53,7 @@ export class DialogueEngine {
     process.stdout.write(' |\n');
   }
 
-  printDialogueFromTxt(filename) {
+  printDialogueFromTxt(filename : string) {
     try {
       const data = fs.readFileSync(filename, 'utf8');
       const lines = data.split('\n');
@@ -62,7 +62,7 @@ export class DialogueEngine {
         // empty lines
         if (line.length === 0) {
           // this.rawPrintLine([line]);
-          const input = prompt('| ')
+          const input = prompt('| ');
 
         // lines with dialogue
         } else {
@@ -70,6 +70,10 @@ export class DialogueEngine {
 
           // handle the name
           const firstWord = wordArray.shift();
+          if (!firstWord) {
+            throw "Dialogue file not formatted correctly.";
+          }
+
           const charOrName = firstWord.slice(0, -1);
           if (charOrName.toLowerCase() in playerUnits) {
             const playerUnitName = playerUnits[charOrName.toLowerCase()].playerUnitName;
@@ -92,7 +96,7 @@ export class DialogueEngine {
     console.log('\n[Not implemented yet]');
   }
 
-  runDialogueFromTxt(filename) {
+  runDialogueFromTxt(filename : string) {
     this.startPrintDialogue();
     this.printDialogueFromTxt(filename);
     this.endPrintDialogue({addExtraSpace: false});

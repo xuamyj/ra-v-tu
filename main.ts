@@ -1,7 +1,7 @@
 // Ours
-import { playerUnits, weaponTypes, weaponsTriangleAvB, enemiesLevel1 } from './unit_class.js';
-import { DialogueEngine } from './dialogue_engine.js';
-import { Map } from './battle_engine.js';
+import { playerUnits, UnitStatsType } from './unit_class';
+import { DialogueEngine } from './dialogue_engine';
+import { Map } from './battle_engine';
 
 // Like getInput()
 import promptFunc from 'prompt-sync';
@@ -11,7 +11,7 @@ const LINE_WIDTH = 80;
 
 const QUIT_INPUT = 'q';
 
-function loopCharacters(menuTitle, funcOnChar) {
+function loopCharacters(menuTitle : string, funcOnChar : (playerChar:string)=>void) {
   while (true) {
     console.log(menuTitle + `:
       (a) Ava
@@ -32,7 +32,7 @@ function loopCharacters(menuTitle, funcOnChar) {
   } 
 }
 
-function printInfo(playerChar) {
+function printInfo(playerChar : string) {
   console.log('\nAbout ' + playerUnits[playerChar].playerUnitName + ':');
   console.log(playerUnits[playerChar].playerUnitDescription);
 }
@@ -41,7 +41,7 @@ function meetCharactersLoop() {
   loopCharacters('\nMeet the characters', printInfo);
 }
 
-function printStats(playerChar) {
+function printStats(playerChar : string) {
   const playerUnit = playerUnits[playerChar]
   console.log('\n' + playerUnit.playerUnitName + "'s stats:");
   const statsNames = {
@@ -57,7 +57,7 @@ function printStats(playerChar) {
   }
   console.log();
   for (const [stat, name] of Object.entries(statsNames)) {
-    console.log(playerUnit.playerUnitStats[stat] + ' : ' + name);
+    console.log(playerUnit.playerUnitStats[stat as keyof UnitStatsType] + ' : ' + name);
   }
 }
 
@@ -85,7 +85,8 @@ function playLevel1() {
 // Run the main menu loop
 function main() {
   console.log('\nWelcome to FE CAVALRY MINI!');
-  const inputOptions = {
+  // (playerChar:string)=>void
+  const inputOptions : Record<string, ()=>void> = {
     'a': meetCharactersLoop, 
     'b': seeStatsLoop,
     'c': play1Pre,

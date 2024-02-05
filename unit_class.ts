@@ -1,59 +1,67 @@
 
-class WeaponType {
+type WeaponStatsType = {
+  'power' ?: number; // healers only
+  'damage' ?: number; // all other weapons
+  'hit' ?: number;
+  'crit' ?: number;  
+  'range': number[];
+}
+
+class Weapon {
   weaponName;
   weaponStats;
   isHealing;
   
-  constructor(weaponName, isHealing, weaponStats) {
+  constructor(weaponName : string, isHealing : boolean, weaponStats : WeaponStatsType) {
     this.weaponName = weaponName;
     this.isHealing = isHealing;
     this.weaponStats = weaponStats;
   }
 }
 
-export const weaponTypes = {
-  's': new WeaponType('Sword', false, 
+export const weapons = {
+  's': new Weapon('Sword', false, 
   {
     'damage': 6,
     'hit': 90,
     'crit': 0,
     'range': [1]
   }),
-  'l': new WeaponType('Lance', false, 
+  'l': new Weapon('Lance', false, 
   {
     'damage': 7,
     'hit': 80,
     'crit': 0,
     'range': [1]
   }),
-  'a': new WeaponType('Axe', false, 
+  'a': new Weapon('Axe', false, 
   {
     'damage': 8,
     'hit': 70,
     'crit': 0,
     'range': [1]
   }),
-  'b': new WeaponType('Bow', false, 
+  'b': new Weapon('Bow', false, 
   {
     'damage': 8,
     'hit': 80,
     'crit': 0,
     'range': [2]
   }),
-  'h': new WeaponType('Heal', true, 
+  'h': new Weapon('Heal', true, 
   {
     'power': 8, 
     'range': [1]
   }),
 }
 
-export function weaponsTriangleAvB(weaponA, weaponB) {
+export function weaponsTriangleAvB(weaponA: string, weaponB: string) {
   if ((weaponA === 's' && weaponB === 'a') || 
-  (weaponA === 'a' && weaponB === 'l')
+  (weaponA === 'a' && weaponB === 'l') || 
   (weaponA === 'l' && weaponB === 's')) {
     return 1; // A has advantage
   } else if ((weaponA === 'a' && weaponB === 's') || 
-  (weaponA === 'l' && weaponB === 'a')
+  (weaponA === 'l' && weaponB === 'a') || 
   (weaponA === 's' && weaponB === 'l')) {
     return -1; // A has disadvantage
   } else {
@@ -63,11 +71,24 @@ export function weaponsTriangleAvB(weaponA, weaponB) {
 
 // ----------------------------------------
 
-class Unit {
+export type UnitStatsType = {
+  'level' : number,
+  'hp' : number,
+  'str' : number,
+  'mag' : number,
+  'def' : number,
+  'res' : number,
+  'skill' : number,
+  'speed' : number,
+  'mov' : number
+}
+type UnitGrowthRatesType = Omit<UnitStatsType, 'level'|'mov'>
+
+export class Unit {
   visualChar;
   weaponInitial;
 
-  constructor(visualChar, weaponInitial) {
+  constructor(visualChar : string, weaponInitial : string) {
     this.visualChar = visualChar;
     this.weaponInitial = weaponInitial;
   }
@@ -84,7 +105,7 @@ class EnemyUnit extends Unit {
   // stats
   enemyStats;
   
-  constructor(enemyName, weaponInitial, enemyStats) {
+  constructor(enemyName : string, weaponInitial : string, enemyStats: UnitStatsType) {
     super('e', weaponInitial);
 
     this.enemyName = enemyName;
@@ -172,12 +193,13 @@ export const enemiesLevel1 = {
 
 class PlayerUnit extends Unit {
   playerUnitName;
+  playerUnitDescription;
   // stats
   playerUnitStats;
   // growth rates
   growthRates;
   
-  constructor(playerUnitName, visualChar, weaponInitial, playerUnitDescription, playerUnitStats, growthRates) {
+  constructor(playerUnitName : string, visualChar : string, weaponInitial : string, playerUnitDescription : string, playerUnitStats : UnitStatsType, growthRates : UnitGrowthRatesType) {
     super(visualChar, weaponInitial);
 
     this.playerUnitName = playerUnitName;
@@ -189,7 +211,9 @@ class PlayerUnit extends Unit {
   }
 }
 
-export const playerUnits = {
+
+// Record = dictionary / map
+export const playerUnits : Record<string, PlayerUnit> = {
   'a': new PlayerUnit('Ava', 'A', 's',
   `\nAva really likes horses, and she can't help being a little enthusiastic! 
 She fights with a sword. 
