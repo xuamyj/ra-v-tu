@@ -2,7 +2,8 @@ Things for later:
 
 - add weapons triangle
 - gain exp
-- gain supports
+- gain supports 
+---- 
 - dialogue mid-battle, like needing to retreat
 - enemies can move and initiate fight
 

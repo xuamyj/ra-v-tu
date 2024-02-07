@@ -177,9 +177,10 @@ export const enemiesLevel1 = {
   'ea2': createAxeHenchman(),
   'eb3': createBowHenchman(),
 
-  'ea4': createAxeHenchman(),
-  'ea5': createAxeHenchman(),
-  'es6': createSwordHenchman(),
+  // 'ea4': createAxeHenchman(),
+  // 'ea5': createAxeHenchman(),
+  // 'es6': createSwordHenchman(),
+  // TODO: go back to level1players.csv ^
 
   'ea7': createAxeHenchman(),
   'es8': createSwordHenchman(),

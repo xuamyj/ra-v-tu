@@ -7,9 +7,10 @@ import { BattleEngine, QUIT_INPUT } from './battle_engine';
 import promptFunc from 'prompt-sync';
 const prompt = promptFunc();
 
+
 const LINE_WIDTH = 80;
 export const SECRET_DEBUGGING_LOSE = false;
-export const SECRET_DEBUGGING_WIN = true;
+export const SECRET_DEBUGGING_WIN = false;
 
 function loopCharacters(menuTitle : string, funcOnChar : (playerChar:string)=>void) {
   while (true) {
@@ -78,7 +79,9 @@ function play1Post() {
 // can you take params into a pointer function?
 function playLevel1() {
   console.log('\nLevel 1');
-  const engine = new BattleEngine('level1players.csv', playerUnits);
+  // const engine = new BattleEngine('level1players.csv');
+  // TODO: go back to level1players.csv ^
+  const engine = new BattleEngine('level1DEBUG.csv');
   engine.playLevel();
 
   // engine.checkPlayerBattleUnits();
