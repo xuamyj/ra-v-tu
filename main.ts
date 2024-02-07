@@ -1,15 +1,15 @@
 // Ours
 import { playerUnits, UnitStatsType } from './unit_class';
 import { DialogueEngine } from './dialogue_engine';
-import { Map } from './battle_engine';
+import { BattleEngine, QUIT_INPUT } from './battle_engine';
 
 // Like getInput()
 import promptFunc from 'prompt-sync';
 const prompt = promptFunc();
 
 const LINE_WIDTH = 80;
-
-const QUIT_INPUT = 'q';
+export const SECRET_DEBUGGING_LOSE = false;
+export const SECRET_DEBUGGING_WIN = true;
 
 function loopCharacters(menuTitle : string, funcOnChar : (playerChar:string)=>void) {
   while (true) {
@@ -57,7 +57,7 @@ function printStats(playerChar : string) {
   }
   console.log();
   for (const [stat, name] of Object.entries(statsNames)) {
-    console.log(playerUnit.playerUnitStats[stat as keyof UnitStatsType] + ' : ' + name);
+    console.log(playerUnit.unitStats[stat as keyof UnitStatsType] + ' : ' + name);
   }
 }
 
@@ -78,8 +78,10 @@ function play1Post() {
 // can you take params into a pointer function?
 function playLevel1() {
   console.log('\nLevel 1');
-  const map = new Map('level1players.csv');
-  map.printMap();
+  const engine = new BattleEngine('level1players.csv', playerUnits);
+  engine.playLevel();
+
+  // engine.checkPlayerBattleUnits();
 }
 
 // Run the main menu loop

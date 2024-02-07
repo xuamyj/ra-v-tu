@@ -1,6 +1,5 @@
 Things for later:
 
-- check for victory
 - add weapons triangle
 - gain exp
 - gain supports

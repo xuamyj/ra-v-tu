@@ -19,7 +19,7 @@ class Weapon {
   }
 }
 
-export const weapons = {
+export const weapons : Record<string, Weapon> = {
   's': new Weapon('Sword', false, 
   {
     'damage': 6,
@@ -55,7 +55,7 @@ export const weapons = {
   }),
 }
 
-export function weaponsTriangleAvB(weaponA: string, weaponB: string) {
+export function weaponsTriangleAvB(weaponA : string, weaponB : string) {
   if ((weaponA === 's' && weaponB === 'a') || 
   (weaponA === 'a' && weaponB === 'l') || 
   (weaponA === 'l' && weaponB === 's')) {
@@ -87,10 +87,12 @@ type UnitGrowthRatesType = Omit<UnitStatsType, 'level'|'mov'>
 export class Unit {
   visualChar;
   weaponInitial;
+  unitStats;
 
-  constructor(visualChar : string, weaponInitial : string) {
+  constructor(visualChar : string, weaponInitial : string, unitStats : UnitStatsType) {
     this.visualChar = visualChar;
     this.weaponInitial = weaponInitial;
+    this.unitStats = unitStats;
   }
 
   getVisualUnitLetters() {
@@ -102,15 +104,11 @@ export class Unit {
 
 class EnemyUnit extends Unit {
   enemyName;
-  // stats
-  enemyStats;
   
-  constructor(enemyName : string, weaponInitial : string, enemyStats: UnitStatsType) {
-    super('e', weaponInitial);
+  constructor(enemyName : string, weaponInitial : string, unitStats: UnitStatsType) {
+    super('e', weaponInitial, unitStats);
 
     this.enemyName = enemyName;
-    // weapons    // stats
-    this.enemyStats = enemyStats;
   }
 }
 
@@ -191,21 +189,17 @@ export const enemiesLevel1 = {
 
 // ----------------------------------------
 
-class PlayerUnit extends Unit {
+export class PlayerUnit extends Unit {
   playerUnitName;
   playerUnitDescription;
-  // stats
-  playerUnitStats;
   // growth rates
   growthRates;
   
-  constructor(playerUnitName : string, visualChar : string, weaponInitial : string, playerUnitDescription : string, playerUnitStats : UnitStatsType, growthRates : UnitGrowthRatesType) {
-    super(visualChar, weaponInitial);
+  constructor(playerUnitName : string, visualChar : string, weaponInitial : string, playerUnitDescription : string, unitStats : UnitStatsType, growthRates : UnitGrowthRatesType) {
+    super(visualChar, weaponInitial, unitStats);
 
     this.playerUnitName = playerUnitName;
     this.playerUnitDescription = playerUnitDescription;
-    // stats
-    this.playerUnitStats = playerUnitStats;
     // growth rates
     this.growthRates = growthRates;
   }
