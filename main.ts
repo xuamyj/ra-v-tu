@@ -10,7 +10,7 @@ const prompt = promptFunc();
 
 const LINE_WIDTH = 80;
 export const SECRET_DEBUGGING_LOSE = false;
-export const SECRET_DEBUGGING_WIN = false;
+export const SECRET_DEBUGGING_WIN = true;
 
 function loopCharacters(menuTitle : string, funcOnChar : (playerChar:string)=>void) {
   while (true) {

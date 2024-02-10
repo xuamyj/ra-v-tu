@@ -1,4 +1,10 @@
 Things for later:
+- i think this is a apply/bind/call error but am too sleepy to dig into that, teach me please
+
+- remember to print enemy stats
+- move, obviously
+- when checking healing, need to make sure hp is not full
+- when fighting, need to do that big calculation. ALSO how to adjust for "luck" stat, ALSO should we readjust the stats now? 
 
 - add weapons triangle
 - gain exp

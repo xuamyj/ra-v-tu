@@ -65,6 +65,21 @@ class BattleUnit {
   checkTurnRemaining() {
     return this.turnStatus !== TurnStatus.TurnDone;
   }
+
+  printBattleUnit() {
+    const st = this.origUnit.unitStats;
+    console.log(
+      this.origUnit.visualChar + this.origUnit.weaponInitial + ': HP ' + this.currHP + '/' + st.hp + '\t' +
+      st.str + ' Str, ' + 
+      st.mag + ' Mag, ' + 
+      st.def + ' Def, ' + 
+      st.res + ' Res, ' + 
+      st.skill + ' Skl, ' + 
+      st.speed + ' Spd, ' + 
+      st.mov + ' Mov \t' + 
+      'Lvl ' + st.level
+    );
+  }
 }
 
 export class BattleEngine {
@@ -111,6 +126,12 @@ export class BattleEngine {
       return null;
     }
 
+    // Console display so people know what they're choosing from 
+    this.map.printMap();
+    for (const [playerChar, battleUnit] of Object.entries(availableChars)) {
+      battleUnit.printBattleUnit();
+    }
+
     while (true) {
       console.log('\nSelect character:');
       for (const [playerChar, battleUnit] of Object.entries(availableChars)) {
@@ -131,6 +152,7 @@ export class BattleEngine {
     if (battleUnit.turnStatus === TurnStatus.TurnDone) {
       return null;
     }
+    const currLoc = this.map.unitToLoc[c];
 
     const possibleActions : Record<string,string> = {
       'w': Actions.Wait
@@ -139,10 +161,12 @@ export class BattleEngine {
       possibleActions['m'] = Actions.Move;
     }
     const weapon = weapons[battleUnit.origUnit.weaponInitial];
-    if (weapon.isHealing) {
-      possibleActions['h'] = Actions.Heal;
-    } else {
-      possibleActions['f'] = Actions.Fight;
+    if (weapon.isHealing && 
+      this.map.getUnitsInRange(currLoc[0], currLoc[1], weapon.weaponStats.range, this.map.isFriend)) {
+        possibleActions['h'] = Actions.Heal;
+    } else if (!weapon.isHealing && 
+      this.map.getUnitsInRange(currLoc[0], currLoc[1], weapon.weaponStats.range, this.map.isEnemy)) {
+        possibleActions['f'] = Actions.Fight;
     }
 
     if (SECRET_DEBUGGING_LOSE) {
@@ -173,7 +197,6 @@ export class BattleEngine {
   }
 
   playOneTurn() {
-    this.map.printMap();
     console.log('\n' + 'Turn ' + this.turnCounter);
 
     while (true) {

@@ -37,10 +37,10 @@ const ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M
 
 export class Map {
   numRows; // 16
-  numCols; // 11, A-J
-  terrainMap : Record<string, string> = {}; // Dictionary: location -> terrain. Shouldn't change
-  unitToLoc : Record<string, [string, string]> = {}; // Dictionary: unit -> location
-  locToUnit : Record<string, string> = {}; // Dictionary: location -> unit
+  numCols; // 11, A-K
+  terrainMap : Record<string, string> = {}; // Dictionary: location ColRow -> terrain. Shouldn't change
+  unitToLoc : Record<string, [string, string]> = {}; // Dictionary: unit -> location [Col, Row]
+  locToUnit : Record<string, string> = {}; // Dictionary: location ColRow -> unit
 
   // private, just for quick checking
   allUnits : Record<string, Unit>; 
@@ -155,4 +155,84 @@ export class Map {
     // last line
     this.rawPrintBorder();
   }
+
+  // ----------------------------------------
+
+  RANGE_DIFFS = {
+    1: [[0, -1], [0, 1], [-1, 0], [1, 0]], 
+    2: [[0, -2], [1, -1], [2, 0], [1, 1], [0, 2], [-1, 1], [-2, 0], [-1, -1]]
+  }
+
+  getColDiff(colStr : string, diff : number) {
+    const newCode = colStr.charCodeAt(0) + diff;
+    return String.fromCharCode(newCode);
+  }
+
+  getRowDiff(rowStr : string, diff : number) {
+    const newRow = Number(rowStr) + diff;
+    return String(newRow);
+  }
+
+  isOutOfBounds(colRow : string) {
+    const colStr = colRow[0];
+    const rowStr = colRow[1];
+    return (
+      colStr < 'A' || colStr >= ALPHABET[this.numCols] || 
+      rowStr < '1' || Number(rowStr) > this.numRows
+    );
+  }
+
+  isWall(colRow : string) {
+    return (
+      colRow in this.terrainMap && 
+      this.terrainMap[colRow] === '#'
+    );
+  }
+
+  isEnemy(colRow : string) {
+    console.log('\nSECOND  ' + colRow);
+    console.log(this.locToUnit);
+    return (
+      colRow in this.locToUnit && 
+      this.locToUnit[colRow][0] === 'e'
+    );
+  }
+
+  isFriend(colRow : string) {
+    console.log('\nSECOND  ' + colRow);
+    console.log(this.locToUnit);
+    return (
+      colRow in this.locToUnit && 
+      this.locToUnit[colRow][0] !== 'e' // note that evander will be 'E', not 'e'
+    );
+  }
+
+  getUnitsInRange(currColStr : string, currRowStr : string, weaponRange : number[], isFriendOrEnemyFunc : (colRow:string)=>boolean) : string[] {
+    const resultCharArr = [];
+
+    const allRangeDiffs = [];
+    for (const rangeNum of weaponRange) {
+      if (!(rangeNum === 1 || rangeNum === 2)) {
+        throw "Need to implement range > 2";
+      }
+      const rangeDiffs = this.RANGE_DIFFS[rangeNum];
+      allRangeDiffs.push(...rangeDiffs);
+    }
+
+    for (const [colDiff, rowDiff] of allRangeDiffs) {
+      const newColStr = this.getColDiff(currColStr, colDiff);
+      const newRowStr = this.getRowDiff(currRowStr, rowDiff);
+      const newColRow = newColStr + newRowStr;
+
+      console.log('\nDEBUG  ' + newColRow);
+      console.log(this.locToUnit);
+      // the way we implemented (direct mappping), we don't need to check in bounds / not wall. 
+      if (isFriendOrEnemyFunc(newColRow)) {
+        resultCharArr.push(this.locToUnit[newColRow]);
+      }
+    }
+
+    return resultCharArr;
+  }
+
 }
