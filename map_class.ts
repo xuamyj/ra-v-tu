@@ -189,7 +189,7 @@ export class Map {
     );
   }
 
-  isEnemy(colRow : string) {
+  isEnemy = (colRow : string) => {
     console.log('\nSECOND  ' + colRow);
     console.log(this.locToUnit);
     return (
@@ -198,7 +198,7 @@ export class Map {
     );
   }
 
-  isFriend(colRow : string) {
+  isFriend = (colRow : string) => {
     console.log('\nSECOND  ' + colRow);
     console.log(this.locToUnit);
     return (
