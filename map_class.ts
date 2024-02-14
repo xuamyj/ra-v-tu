@@ -190,8 +190,6 @@ export class Map {
   }
 
   isEnemy = (colRow : string) => {
-    console.log('\nSECOND  ' + colRow);
-    console.log(this.locToUnit);
     return (
       colRow in this.locToUnit && 
       this.locToUnit[colRow][0] === 'e'
@@ -199,8 +197,6 @@ export class Map {
   }
 
   isFriend = (colRow : string) => {
-    console.log('\nSECOND  ' + colRow);
-    console.log(this.locToUnit);
     return (
       colRow in this.locToUnit && 
       this.locToUnit[colRow][0] !== 'e' // note that evander will be 'E', not 'e'
@@ -224,8 +220,6 @@ export class Map {
       const newRowStr = this.getRowDiff(currRowStr, rowDiff);
       const newColRow = newColStr + newRowStr;
 
-      console.log('\nDEBUG  ' + newColRow);
-      console.log(this.locToUnit);
       // the way we implemented (direct mappping), we don't need to check in bounds / not wall. 
       if (isFriendOrEnemyFunc(newColRow)) {
         resultCharArr.push(this.locToUnit[newColRow]);

@@ -50,6 +50,10 @@ class BattleUnit {
     return (this.currHP > 0);
   }
 
+  checkNeedsHealing() {
+    return (this.currHP < this.origUnit.unitStats.hp);
+  }
+
   markMoved() {
     this.turnStatus = TurnStatus.CanActOnly;
   }
@@ -66,7 +70,11 @@ class BattleUnit {
     return this.turnStatus !== TurnStatus.TurnDone;
   }
 
-  printBattleUnit() {
+  printBattleUnit({locationStr} : {locationStr ?: string}) { 
+    if (locationStr) {
+      process.stdout.write(locationStr + ' ');
+    }
+
     const st = this.origUnit.unitStats;
     console.log(
       this.origUnit.visualChar + this.origUnit.weaponInitial + ': HP ' + this.currHP + '/' + st.hp + '\t' +
@@ -117,6 +125,32 @@ export class BattleEngine {
 
   // ----------------------------------------
 
+  consolePrintDS = () => {
+    this.map.printMap();
+
+    // print player stats
+    const aliveChars = _.pickBy(this.playerBattleUnits, 
+      (battleUnit) => {
+        return (battleUnit.checkIsAlive())
+      });
+    for (const [playerChar, battleUnit] of Object.entries(aliveChars)) {
+      battleUnit.printBattleUnit({});
+    }
+
+    console.log();
+
+    console.log('Enemies:');
+    // print enemy stats
+    const aliveEnemies = _.pickBy(this.enemyBattleUnits, 
+      (battleUnit) => {
+        return (battleUnit.checkIsAlive())
+      });
+    for (const [enemyChar, battleUnit] of Object.entries(aliveEnemies)) {
+      const [locX, locY] = this.map.unitToLoc[enemyChar];
+      battleUnit.printBattleUnit({'locationStr': locX + locY});
+    }
+  }
+
   chooseRemainingCharacter() : string|null { 
     const availableChars = _.pickBy(this.playerBattleUnits, 
       (battleUnit) => {
@@ -127,10 +161,7 @@ export class BattleEngine {
     }
 
     // Console display so people know what they're choosing from 
-    this.map.printMap();
-    for (const [playerChar, battleUnit] of Object.entries(availableChars)) {
-      battleUnit.printBattleUnit();
-    }
+    this.consolePrintDS();
 
     while (true) {
       console.log('\nSelect character:');
@@ -154,20 +185,36 @@ export class BattleEngine {
     }
     const currLoc = this.map.unitToLoc[c];
 
+    // wait
     const possibleActions : Record<string,string> = {
       'w': Actions.Wait
     }
+
+    // move
     if (battleUnit.turnStatus === TurnStatus.CanMoveOrAct) {
       possibleActions['m'] = Actions.Move;
     }
+
+    // heal and fight
     const weapon = weapons[battleUnit.origUnit.weaponInitial];
+
+    const friendCharArr = this.map.getUnitsInRange(currLoc[0], currLoc[1], weapon.weaponStats.range, this.map.isFriend);
+    const healableFriendArr = _.pickBy(friendCharArr, 
+      (friendChar) => {
+        const battleUnit = this.playerBattleUnits[friendChar];
+        return (battleUnit.checkNeedsHealing())
+      });
+    const enemyCharArr = this.map.getUnitsInRange(currLoc[0], currLoc[1], weapon.weaponStats.range, this.map.isEnemy);
+
     if (weapon.isHealing && 
-      this.map.getUnitsInRange(currLoc[0], currLoc[1], weapon.weaponStats.range, this.map.isFriend)) {
+      _.size(healableFriendArr) > 0) {
         possibleActions['h'] = Actions.Heal;
     } else if (!weapon.isHealing && 
-      this.map.getUnitsInRange(currLoc[0], currLoc[1], weapon.weaponStats.range, this.map.isEnemy)) {
+      enemyCharArr.length > 0) {
         possibleActions['f'] = Actions.Fight;
     }
+
+    // --- end action choices ---
 
     if (SECRET_DEBUGGING_LOSE) {
       possibleActions['d'] = '<S_D_LOSE>: Defeated';
