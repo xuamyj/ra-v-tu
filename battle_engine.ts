@@ -119,8 +119,24 @@ export class BattleEngine {
 
   }
 
-  chooseMoveLoc() {
+  chooseMoveLoc = (c : string, battleUnit : BattleUnit) => {
+    const [currColStr, currRowStr] = this.map.unitToLoc[c]
+    const movableSquares = this.map.getMovableSquares(currColStr, currRowStr, battleUnit.origUnit.unitStats.mov);
 
+    const printableSquares = Array.from(movableSquares);
+    printableSquares.sort();
+
+    while (true) {
+      console.log('\nEnter location:');
+      console.log('(Options: ' + printableSquares.join(', ') + ')');
+      const input = prompt('> ').toUpperCase();
+
+      if (movableSquares.has(input)) {
+        return input;
+      } else {
+        console.log('Sorry, please enter a valid input. ')
+      }
+    }
   }
 
   // ----------------------------------------
@@ -221,7 +237,7 @@ export class BattleEngine {
     }
 
     while (true) {
-      console.log('\nChoose Action:');
+      console.log('\nChoose action:');
       for (const [actionChar, actionName] of Object.entries(possibleActions)) {
         console.log('(' + actionChar + ') ' + actionName);
       }
@@ -271,7 +287,10 @@ export class BattleEngine {
           battleUnit.markTurnDone();
 
         } else if (ac === 'm') {
-          console.log('\n' + playerUnitName + ' did Move');
+          const resultLoc = this.chooseMoveLoc(c, battleUnit);
+          this.map.moveThere(c, resultLoc);
+
+          console.log('\n' + playerUnitName + ' moved to ' + resultLoc);
           battleUnit.markMoved();
 
         } else if (ac === 'h') {

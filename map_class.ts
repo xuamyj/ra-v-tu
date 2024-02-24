@@ -175,7 +175,7 @@ export class Map {
 
   isOutOfBounds(colRow : string) {
     const colStr = colRow[0];
-    const rowStr = colRow[1];
+    const rowStr = colRow.slice(1);
     return (
       colStr < 'A' || colStr >= ALPHABET[this.numCols] || 
       rowStr < '1' || Number(rowStr) > this.numRows
@@ -227,6 +227,59 @@ export class Map {
     }
 
     return resultCharArr;
+  }
+
+  // ----------------------------------------
+
+  recursiveGetMovableSquaresHelper = (currColStr : string, currRowStr : string, movLeft : number, movableSquares : Set<string>) => {
+    if (movLeft < 0) {
+      return;
+    }
+    const colRow = currColStr + currRowStr;
+    if (this.isOutOfBounds(colRow) || this.terrainMap[colRow] === '#' || this.isEnemy(colRow)) { // out of bounds, wall, or enemy
+      return;
+    }
+    movableSquares.add(colRow);
+
+    for (const [colDiff, rowDiff] of this.RANGE_DIFFS['1']) {
+      const newColStr = this.getColDiff(currColStr, colDiff);
+      const newRowStr = this.getRowDiff(currRowStr, rowDiff);
+
+      let movCost = 1;
+      const newColRow = newColStr + newRowStr;
+      if (this.terrainMap[newColRow] === 'T') { // tree
+        movCost++;
+      }
+
+      this.recursiveGetMovableSquaresHelper(newColStr, newRowStr, movLeft-movCost, movableSquares);
+    }
+  }
+
+  getMovableSquares = (currColStr : string, currRowStr : string, mov : number) => {
+    const movableSquares : Set<string> = new Set();
+
+    for (const [colDiff, rowDiff] of this.RANGE_DIFFS['1']) {
+      const newColStr = this.getColDiff(currColStr, colDiff);
+      const newRowStr = this.getRowDiff(currRowStr, rowDiff);
+
+      this.recursiveGetMovableSquaresHelper(newColStr, newRowStr, mov-1, movableSquares);
+    }
+
+    for (const [loc, unit] of Object.entries(this.locToUnit)) {
+      movableSquares.delete(loc); // don't stand on a friend
+    }
+    return movableSquares;
+  }
+
+  moveThere = (c : string, resultLoc : string) => {
+    const [oldCol, oldRow] = this.unitToLoc[c];
+
+    const colStr = resultLoc[0];
+    const rowStr = resultLoc.slice(1);
+    this.unitToLoc[c] = [colStr, rowStr];
+
+    this.locToUnit[resultLoc] = c;
+    delete this.locToUnit[oldCol + oldRow];
   }
 
 }
