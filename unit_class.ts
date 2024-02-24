@@ -130,7 +130,7 @@ function createAxeHenchman() {
 function createBowHenchman() {
   return new EnemyUnit('Bow Henchman', 'b',
   {
-    'level': 3,
+    'level': 2,
     'hp': 19,
     'str': 7,
     'mag': 0,
@@ -214,14 +214,14 @@ export const playerUnits : Record<string, PlayerUnit> = {
 She fights with a sword. 
 She is part of the traveling merchant group that also includes Foteini, Leonidas, and Malcolm.`,
   { // stats
-    'level': 1,
-    'hp': 19,
-    'str': 7,
+    'level': 3,
+    'hp': 22,
+    'str': 8,
     'mag': 4,
-    'def': 6,
-    'res': 2,
-    'skill': 7,
-    'speed': 6,
+    'def': 8,
+    'res': 4,
+    'skill': 8,
+    'speed': 8,
     'mov': 5
   }, { // growth rates
     'hp': 45,
@@ -238,14 +238,14 @@ She is part of the traveling merchant group that also includes Foteini, Leonidas
 She fights with a bow. 
 She is part of the traveling merchant group that also includes Ava, Leonidas, and Malcolm.`,
   { 
-    'level': 11,
-    'hp': 26,
-    'str': 13,
+    'level': 3,
+    'hp': 20,
+    'str': 8,
     'mag': 0,
-    'def': 10,
-    'res': 4,
-    'skill': 17,
-    'speed': 11,
+    'def': 5,
+    'res': 2,
+    'skill': 12,
+    'speed': 10,
     'mov': 5
   }, { // growth rates
     'hp': 50,
@@ -262,14 +262,14 @@ She is part of the traveling merchant group that also includes Ava, Leonidas, an
 He fights with a lance. 
 He is part of the traveling merchant group that also includes Ava, Foteini, and Malcolm.`,
   { 
-    'level': 10,
+    'level': 3,
     'hp': 25,
-    'str': 13,
+    'str': 9,
     'mag': 0,
-    'def': 13,
-    'res': 8,
+    'def': 10,
+    'res': 1,
     'skill': 11,
-    'speed': 12,
+    'speed': 5,
     'mov': 5
   }, { // growth rates
     'hp': 30,
@@ -286,15 +286,15 @@ He is part of the traveling merchant group that also includes Ava, Foteini, and 
 He is a healer, so he uses a staff. 
 He is part of the traveling merchant group that also includes Ava, Foteini, and Leonidas.`,
   { 
-    'level':5,
+    'level':3,
     'hp': 19,
     'str': 2,
-    'mag': 11,
-    'def': 4,
+    'mag': 9,
+    'def': 3,
     'res': 11,
     'skill': 5,
     'speed': 10,
-    'mov': 7
+    'mov': 5
   }, { // growth rates
     'hp': 30,
     'str': 5,
